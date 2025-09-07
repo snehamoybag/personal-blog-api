@@ -1,14 +1,24 @@
 import express, { urlencoded, json } from "express";
 import cors from "cors";
+import errorRequestHandler from "./middlewares/error-request-handler.middleware";
+import requeset404Handler from "./middlewares/404-request-handler.middleware";
 
 const app = express();
 
 // CORS
 app.use(cors());
 
-// parsers
+// PARSERS
 app.use(urlencoded({ extended: true }));
 app.use(json());
+
+// ROUTES
+
+// ERROR HANDLER MIDDLEWARE
+app.use(errorRequestHandler);
+
+// 404 HANDLER
+app.use(requeset404Handler);
 
 const PORT = Number(process.env.PORT) || 3000;
 const HOST = process.env.HOST || "localhost";
