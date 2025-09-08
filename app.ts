@@ -16,6 +16,7 @@ app.use(json());
 // ROUTES
 app.use("/", routes.index);
 app.use("/signup", routes.signup);
+app.use("/login", routes.login);
 
 // ERROR HANDLER MIDDLEWARE
 app.use(errorRequestHandler);
