@@ -2,6 +2,7 @@ import express, { urlencoded, json } from "express";
 import cors from "cors";
 import errorRequestHandler from "./middlewares/error-request-handler.middleware";
 import requeset404Handler from "./middlewares/404-request-handler.middleware";
+import * as routes from "./routes";
 
 const app = express();
 
@@ -13,6 +14,7 @@ app.use(urlencoded({ extended: true }));
 app.use(json());
 
 // ROUTES
+app.use("/", routes.index);
 
 // ERROR HANDLER MIDDLEWARE
 app.use(errorRequestHandler);
