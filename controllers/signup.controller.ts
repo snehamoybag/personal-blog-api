@@ -4,6 +4,8 @@ import { validationResult } from "express-validator";
 import { FailureResponse, SuccessResponse } from "../libs/http-response-shapes";
 import { create as createUser } from "../models/user.model";
 import { UserRegistrationData } from "../types/user-registration-data.type";
+import assertUser from "../libs/asserts/user.assert";
+import assertAuthToken from "../libs/asserts/auth-token.assert";
 
 export const signup: RequestHandler[] = [
   userValidations.name("First name", "firstName"),
@@ -28,10 +30,23 @@ export const signup: RequestHandler[] = [
   },
 
   // handle user creation
-  async (req, res) => {
+  async (req, _res, next) => {
     const formData: UserRegistrationData = req.body;
     const user = await createUser(formData);
 
-    res.json(new SuccessResponse("Signup complete.", { user }));
+    req.user = user;
+    next();
   },
 ];
+
+export const sendSuccessData: RequestHandler = (req, res) => {
+  const user = assertUser(req);
+  const token = assertAuthToken(res);
+
+  res.json(
+    new SuccessResponse(
+      "Signup Successful. Use this token in the Authorization header as a Bearer token to authenticate future requests.",
+      { user, token },
+    ),
+  );
+};

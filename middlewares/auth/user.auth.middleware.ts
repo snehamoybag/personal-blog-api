@@ -11,6 +11,7 @@ const authenticateUser: RequestHandler = (req, res, next) => {
 
     // on successful login
     if (user) {
+      req.user = user; // update the request with user
       return next();
     }
 
