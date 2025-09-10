@@ -3,7 +3,7 @@ import { SafeUser } from "../types/safe-user.type";
 import bcrypt from "bcryptjs";
 import { UserRegistrationData } from "../types/user-registration-data.type";
 
-const safeUserSelects = {
+export const safeUserSelects = {
   omit: {
     email: true,
     passwordHash: true,
@@ -41,17 +41,15 @@ export const create = async ({
   });
 };
 
-export const findByEmail = async (email: string): Promise<SafeUser | null> => {
-  const user = await prisma.user.findUnique({
+export const findById = (id: number): Promise<SafeUser | null> => {
+  return prisma.user.findUnique({ where: { id }, ...safeUserSelects });
+};
+
+export const findByEmail = (email: string): Promise<SafeUser | null> => {
+  return prisma.user.findUnique({
     where: { email },
     ...safeUserSelects,
   });
-
-  if (!user) {
-    return null;
-  }
-
-  return user;
 };
 
 export const getIsPasswordMatching = async (
