@@ -27,6 +27,8 @@ model User {
 
   writtenComments Comment[] @relation("writtenComment")
 
+  Images UserImage[]
+
   @@index(email)
 }
 
@@ -41,35 +43,41 @@ model Profile {
   user   User @relation(fields: [userId], references: [id])
   userId Int  @unique
 
-  avatarUrl String? @unique 
+  avatarUrl String? @unique
+}
+
+// all the images uploaded by user eg: blog images, avatar image etc
+model UserImage {
+  id        Int      @id @default(autoincrement())
+  cloudId   String   @unique
+  url       String   @unique
+  mimeType  String
+  size      String
+  createdAt DateTime @default(now())
+
+  user   User @relation(fields: [userId], references: [id])
+  userId Int
+
+  @@index(url)
 }
 
 model Blog {
-  id      Int         @id @default(autoincrement())
-  title   String      @db.VarChar(120)
-  content String
-  status BlogStatus
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt()
+  id        Int        @id @default(autoincrement())
+  title     String     @db.VarChar(120)
+  content   String
+  status    BlogStatus
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt()
 
-  imgUrls BlogImage[]
+  coverImg String
+  imgUrls  String[]
 
   tags Tag[]
 
-  author User @relation("writtenBlog", fields:[authorId], references:[id])
+  author   User @relation("writtenBlog", fields: [authorId], references: [id])
   authorId Int
 
   comments Comment[]
-}
-
-model BlogImage {
-  id  Int    @id @default(autoincrement())
-  url String @unique
-
-  blog   Blog @relation(fields: [blogId], references: [id])
-  blogId Int
-
-  @@index(url)
 }
 
 model Tag {
@@ -82,15 +90,15 @@ model Tag {
 }
 
 model Comment {
-  id   Int    @id @default(autoincrement())
-  message String @db.VarChar(255)
+  id        Int      @id @default(autoincrement())
+  message   String   @db.VarChar(255)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt()
 
-  author User @relation("writtenComment", fields:[authorId], references:[id])
+  author   User @relation("writtenComment", fields: [authorId], references: [id])
   authorId Int
 
-  blog Blog @relation(fields:[blogId], references:[id])
+  blog   Blog @relation(fields: [blogId], references: [id])
   blogId Int
 }
 
