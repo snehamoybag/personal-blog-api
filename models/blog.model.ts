@@ -2,6 +2,7 @@ import prisma from "../configs/prisma.config";
 import { safeUserSelects } from "./user.model";
 import { RawBlog } from "../types/raw-blog.type";
 import { FormattedBlog } from "../types/formatted-blog.type";
+import { CreateBlog } from "../types/create-blog.type";
 
 // HELPERS
 const blogSelects = {
@@ -52,6 +53,12 @@ export const findOne = async (id: number): Promise<FormattedBlog | null> => {
   if (!rawBlog) {
     return null;
   }
+
+  return formatRawBlog(rawBlog);
+};
+
+export const createOne = async (data: CreateBlog): Promise<FormattedBlog> => {
+  const rawBlog: RawBlog = await prisma.blog.create({ data, ...blogSelects });
 
   return formatRawBlog(rawBlog);
 };
