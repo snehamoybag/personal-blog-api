@@ -4,10 +4,14 @@ import * as blogModel from "../models/blog.model";
 import { FailureResponse, SuccessResponse } from "../libs/http-response-shapes";
 import { validationResult } from "express-validator";
 import { ErrorNotFound } from "../libs/http-exceptions";
+import {
+  limit as limitValidation,
+  offset as offsetValidation,
+} from "../validations/limit-offset.validation";
 
 export const getMany: RequestHandler[] = [
-  blogValidations.limit(),
-  blogValidations.offset(),
+  limitValidation(),
+  offsetValidation(),
 
   // handle url query validation errors
   (req, res, next) => {

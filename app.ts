@@ -18,6 +18,7 @@ app.use("/", routes.index);
 app.use("/signup", routes.signup);
 app.use("/login", routes.login);
 app.use("/blogs", routes.blogs);
+app.use("/comments", routes.comments);
 
 // ERROR HANDLER MIDDLEWARE
 app.use(errorRequestHandler);
