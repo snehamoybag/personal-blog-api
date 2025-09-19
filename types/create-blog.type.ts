@@ -1,3 +1,5 @@
 import { Blog } from "../generated/prisma";
 
-export type CreateBlog = Omit<Blog, "id" | "createdAt" | "updatedAt">;
+export type CreateBlog = Omit<Blog, "id" | "createdAt" | "updatedAt"> & {
+  tags: string[];
+};

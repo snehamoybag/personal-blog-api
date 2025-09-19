@@ -8,6 +8,9 @@ import {
   limit as limitValidation,
   offset as offsetValidation,
 } from "../validations/limit-offset.validation";
+import assertUser from "../libs/asserts/user.assert";
+import { CreateBlog } from "../types/create-blog.type";
+import { UpdateBlog } from "../types/update-blog.type";
 
 export const getMany: RequestHandler[] = [
   limitValidation(),
@@ -69,5 +72,138 @@ export const getOne: RequestHandler[] = [
     }
 
     res.json(new SuccessResponse(`Blog with the id ${blogId}.`, { blog }));
+  },
+];
+
+export const create: RequestHandler[] = [
+  blogValidations.title(),
+  blogValidations.content(),
+  blogValidations.status(),
+
+  // handle validation error
+  (req, res, next) => {
+    const validationErrors = validationResult(req);
+
+    if (validationErrors.isEmpty()) {
+      return next();
+    }
+
+    const statusCode = 400;
+
+    return res.status(statusCode).json(
+      new FailureResponse(statusCode, "Field validation failed.", {
+        errors: validationErrors.mapped(),
+      }),
+    );
+  },
+
+  // handle no validation errors
+  async (req, res) => {
+    const userId = assertUser(req).id;
+
+    // TODO: handle images
+
+    const body = req.body;
+    const blogData: CreateBlog = {
+      title: body.title,
+      content: body.content,
+      status: body.status,
+      tags: [],
+      authorId: userId,
+    };
+
+    const blog = await blogModel.create(blogData);
+
+    res.json(new SuccessResponse("New blog created successfully.", { blog }));
+  },
+];
+
+export const update: RequestHandler[] = [
+  blogValidations.id(),
+  blogValidations.title(true),
+  blogValidations.content(true),
+  blogValidations.status(true),
+
+  // handle validation error
+  (req, res, next) => {
+    const validationErrors = validationResult(req);
+
+    if (validationErrors.isEmpty()) {
+      return next();
+    }
+
+    const statusCode = 400;
+
+    return res.status(statusCode).json(
+      new FailureResponse(statusCode, "Field validation failed.", {
+        errors: validationErrors.mapped(),
+      }),
+    );
+  },
+
+  // no validation errors
+  async (req, res) => {
+    const blogId = Number(req.params.id);
+
+    const blog = await blogModel.findOne(blogId);
+
+    if (!blog) {
+      throw new ErrorNotFound(`Blog with the id ${blogId} is not found.`);
+    }
+
+    // TODO: handle images
+
+    const updateData: UpdateBlog = {
+      id: blogId,
+      title: req.body.title,
+      content: req.body.content,
+      status: req.body.status,
+    };
+
+    const updatedBlog = await blogModel.update(updateData);
+
+    res.json(
+      new SuccessResponse("Blog updated successfully.", { blog: updatedBlog }),
+    );
+  },
+];
+
+export const deleteOne: RequestHandler[] = [
+  blogValidations.id(),
+
+  // handle validationErrors error
+
+  // handle validation error
+  (req, res, next) => {
+    const validationErrors = validationResult(req);
+
+    if (validationErrors.isEmpty()) {
+      return next();
+    }
+
+    const statusCode = 400;
+
+    return res.status(statusCode).json(
+      new FailureResponse(statusCode, "Url parameter validation failed.", {
+        errors: validationErrors.mapped(),
+      }),
+    );
+  },
+
+  // handle no validation errors
+  async (req, res) => {
+    const blogId = Number(req.params.id);
+
+    const blog = await blogModel.findOne(blogId);
+
+    if (!blog) {
+      throw new ErrorNotFound(`Blog with the id ${blogId} is not found.`);
+    }
+
+    const deletedBlog = await blogModel.deleteOne(blogId);
+
+    res.json(
+      new SuccessResponse("Blog deleted successfully.", { blog: deletedBlog }),
+    );
   },
 ];
