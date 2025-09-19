@@ -1,6 +1,9 @@
 import { Router } from "express";
 import * as blogsController from "../controllers/blogs.controller";
-import { getMany as getManyComments } from "../controllers/comments.controller";
+import {
+  getMany as getManyComments,
+  create as createComment,
+} from "../controllers/comments.controller";
 import verifyAuthToken from "../middlewares/auth/verify-auth-token.middleware";
 
 const blogs = Router();
@@ -21,5 +24,6 @@ blogs.delete("/:id", blogsController.deleteOne);
 
 // blogs/2/commets/?limit=10&offset=10
 blogs.get("/:blogId/comments", getManyComments);
+blogs.post("/:blogId/comments", createComment);
 
 export default blogs;

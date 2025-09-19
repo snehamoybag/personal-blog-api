@@ -1,5 +1,7 @@
 import prisma from "../configs/prisma.config";
+import { CreateComment } from "../types/create-comment.type";
 import { FormattedComment } from "../types/formatted-comment.type";
+import { UpdateComment } from "../types/update-comment.type";
 import { safeUserSelects } from "./user.model";
 
 export const findMany = (
@@ -30,5 +32,54 @@ export const findOne = (id: number): Promise<FormattedComment | null> => {
         ...safeUserSelects,
       },
     },
+  });
+};
+
+export const create = (data: CreateComment): Promise<FormattedComment> => {
+  const { message, authorId, blogId } = data;
+
+  return prisma.comment.create({
+    data: {
+      message,
+
+      author: {
+        connect: { id: authorId },
+      },
+
+      blog: {
+        connect: { id: blogId },
+      },
+    },
+
+    include: {
+      author: {
+        ...safeUserSelects,
+      },
+    },
+  });
+};
+
+export const update = (data: UpdateComment): Promise<FormattedComment> => {
+  const { id, message } = data;
+
+  return prisma.comment.update({
+    where: { id },
+
+    data: {
+      message,
+    },
+
+    include: {
+      author: {
+        ...safeUserSelects,
+      },
+    },
+  });
+};
+
+export const deleteOne = (id: number): Promise<FormattedComment> => {
+  return prisma.comment.delete({
+    where: { id },
+    include: { author: { ...safeUserSelects } },
   });
 };
