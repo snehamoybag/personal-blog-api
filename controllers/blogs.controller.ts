@@ -8,8 +8,6 @@ import {
   limit as limitValidation,
   offset as offsetValidation,
 } from "../validations/limit-offset.validation";
-import assertUser from "../libs/asserts/user.assert";
-import { CreateBlog } from "../types/create-blog.type";
 
 export const getMany: RequestHandler[] = [
   limitValidation(),
@@ -71,46 +69,5 @@ export const getOne: RequestHandler[] = [
     }
 
     res.json(new SuccessResponse(`Blog with the id ${blogId}.`, { blog }));
-  },
-];
-
-export const create: RequestHandler[] = [
-  blogValidations.title(),
-  blogValidations.content(),
-  blogValidations.status(),
-
-  // handle validation errors
-  (req, res, next) => {
-    const validationErrors = validationResult(req);
-
-    if (validationErrors.isEmpty()) {
-      return next();
-    }
-
-    const statusCode = 400;
-
-    res.status(statusCode).json(
-      new FailureResponse(statusCode, "Field validation failed.", {
-        errors: validationErrors.mapped(),
-      }),
-    );
-  },
-
-  // handle no error
-  async (req, res) => {
-    const userId = assertUser(req).id;
-
-    // TODO: implement cover image and content images
-    const coverImgUrl = "randomstring";
-    const data: CreateBlog = {
-      ...req.body,
-      coverImgUrl: coverImgUrl,
-      imgUrls: [],
-      authorId: userId,
-    };
-
-    const blog = await blogModel.createOne(data);
-
-    res.json(new SuccessResponse("Blog created successfully.", { blog }));
   },
 ];
