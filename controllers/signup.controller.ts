@@ -11,6 +11,7 @@ export const signup: RequestHandler[] = [
   userValidations.name("First name", "firstName"),
   userValidations.name("Last name", "lastName"),
   userValidations.email(),
+  userValidations.newEmail(),
   userValidations.password(),
 
   // handle validation errors

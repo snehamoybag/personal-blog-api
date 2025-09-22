@@ -1,4 +1,5 @@
 import { body } from "express-validator";
+import { findByEmail as findUserByEmail } from "../models/user.model";
 
 export const name = (
   name: "First name" | "Last name",
@@ -21,6 +22,20 @@ export const email = () => {
     .withMessage("Email is requrired")
     .isEmail()
     .withMessage("Unsupported email format.");
+};
+
+// checks if email is registered on our database.
+// pass validation if not registered.
+export const newEmail = () => {
+  return body("email").custom(async (email: string) => {
+    const userWithEmail = await findUserByEmail(email);
+
+    if (userWithEmail) {
+      throw new Error("Email already registered.");
+    }
+
+    return true;
+  });
 };
 
 export const password = () => {
