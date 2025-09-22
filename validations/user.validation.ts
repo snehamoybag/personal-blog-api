@@ -40,7 +40,7 @@ export const newEmail = () => {
 
 export const password = () => {
   const MIN_LENGTH = 6;
-  const MAX_LENGTH = 32;
+  const MAX_LENGTH = 55;
 
   return body("password")
     .isString()
