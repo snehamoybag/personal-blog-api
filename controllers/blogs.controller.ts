@@ -101,14 +101,13 @@ export const create: RequestHandler[] = [
   async (req, res) => {
     const userId = assertUser(req).id;
 
-    // TODO: handle images
-
-    const body = req.body;
+    const { title, content, status, coverImgUrl } = req.body;
     const blogData: CreateBlog = {
-      title: body.title,
-      content: body.content,
-      status: body.status,
-      tags: [],
+      title,
+      content,
+      status,
+      coverImgUrl,
+      tags: [], // TODO
       authorId: userId,
     };
 
@@ -152,12 +151,14 @@ export const update: RequestHandler[] = [
     }
 
     // TODO: handle images
+    const { title, content, status, coverImgUrl } = req.body;
 
     const updateData: UpdateBlog = {
       id: blogId,
-      title: req.body.title,
-      content: req.body.content,
-      status: req.body.status,
+      title,
+      content,
+      status,
+      coverImgUrl,
     };
 
     const updatedBlog = await blogModel.update(updateData);

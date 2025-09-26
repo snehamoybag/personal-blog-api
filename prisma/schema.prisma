@@ -54,7 +54,7 @@ model Blog {
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt()
 
-  converImgUrl String
+  coverImgUrl String
 
   tags Tag[]
 

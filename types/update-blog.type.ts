@@ -4,6 +4,7 @@ export type UpdateBlog = {
   id: number;
   title?: string;
   content?: string;
+  coverImgUrl?: string;
   status?: BlogStatus;
   tags?: string[];
 };

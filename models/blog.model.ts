@@ -7,8 +7,6 @@ import { UpdateBlog } from "../types/update-blog.type";
 
 const blogSelects = {
   include: {
-    imgUrls: { select: { url: true } },
-
     tags: { select: { name: true } },
 
     author: {
@@ -20,7 +18,6 @@ const blogSelects = {
 const formatRawBlog = (blog: RawBlog) => {
   return {
     ...blog,
-    imgUrls: blog.imgUrls.map((urlObj) => urlObj.url),
     tags: blog.tags.map((tagObj) => tagObj.name),
   };
 };
@@ -61,13 +58,14 @@ export const findOne = async (id: number): Promise<FormattedBlog | null> => {
 export const create = async (
   data: CreateBlog,
 ): Promise<FormattedBlog | null> => {
-  const { title, content, status, tags, authorId } = data;
+  const { title, content, status, coverImgUrl, tags, authorId } = data;
 
   const rawBlog: RawBlog = await prisma.blog.create({
     data: {
       title,
       content,
       status,
+      coverImgUrl,
 
       author: {
         connect: { id: authorId },
@@ -90,7 +88,7 @@ export const create = async (
 };
 
 export const update = async (data: UpdateBlog): Promise<FormattedBlog> => {
-  const { id, title, content, status, tags } = data;
+  const { id, title, content, status, coverImgUrl } = data;
 
   const rawBlog: RawBlog = await prisma.blog.update({
     where: { id },
@@ -99,13 +97,12 @@ export const update = async (data: UpdateBlog): Promise<FormattedBlog> => {
       title,
       content,
       status,
+      coverImgUrl,
     },
 
     // TODO: tags
     // disconnect from removed tags
     // create or connect to new tags
-
-    // TODO: images
 
     ...blogSelects,
   });
@@ -114,21 +111,10 @@ export const update = async (data: UpdateBlog): Promise<FormattedBlog> => {
 };
 
 export const deleteOne = async (id: number): Promise<FormattedBlog> => {
-  const deleteBlogImagesQuery = prisma.blogImage.deleteMany({
-    where: { blogId: id },
-  });
-
-  const deletedBlogQuery = prisma.blog.delete({
+  const deletedBlog: RawBlog = await prisma.blog.delete({
     where: { id },
     ...blogSelects,
   });
 
-  const result = await prisma.$transaction([
-    deleteBlogImagesQuery,
-    deletedBlogQuery,
-  ]);
-
-  const deletedBlogRaw = result[1];
-
-  return formatRawBlog(deletedBlogRaw);
+  return formatRawBlog(deletedBlog);
 };
