@@ -70,7 +70,7 @@ const jwtOptions: StrategyOptionsWithoutRequest = {
 // double check if user still exists in our record
 const jwtVerifyCallback: VerifyCallback = async (payload, done) => {
   try {
-    const userId = Number(payload.sub);
+    const userId = Number(payload.id);
 
     if (isNaN(userId)) {
       return done(null, false, { message: "Invalid user id." });
