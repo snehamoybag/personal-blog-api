@@ -79,6 +79,7 @@ export const create: RequestHandler[] = [
   blogValidations.title(),
   blogValidations.content(),
   blogValidations.status(),
+  blogValidations.coverImgUrl(),
 
   // handle validation error
   (req, res, next) => {
@@ -122,6 +123,7 @@ export const update: RequestHandler[] = [
   blogValidations.title(true),
   blogValidations.content(true),
   blogValidations.status(true),
+  blogValidations.coverImgUrl(true),
 
   // handle validation error
   (req, res, next) => {

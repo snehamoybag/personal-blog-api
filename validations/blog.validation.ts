@@ -1,4 +1,6 @@
 import { body, param } from "express-validator";
+import { findOneByUrl as findImageByUrl } from "../models/image.model";
+import { SafeUser } from "../types/safe-user.type";
 
 // URL PARAMETER
 export const id = () => {
@@ -50,4 +52,28 @@ export const status = (isOptional: boolean = false) => {
     .withMessage(
       "Status must be either 'PUBLISHED' or 'DRAFT' in uppercase letters.",
     );
+};
+
+export const coverImgUrl = (isOptional: boolean = false) => {
+  return body("coverImgUrl")
+    .optional(isOptional)
+    .notEmpty()
+    .withMessage("Cover image url is required.")
+    .isString()
+    .withMessage("Cover image url must be of data type string.")
+    .custom(async (url, { req }) => {
+      const user = req.user as SafeUser; // make sure user is logged in before validations
+
+      const image = await findImageByUrl(url);
+
+      if (!image) {
+        throw new Error(`No image with url ${url} is found.`);
+      }
+
+      if (image.userId !== user.id) {
+        throw new Error(
+          `Image is owned by someone else. Please upload your own image.`,
+        );
+      }
+    });
 };
