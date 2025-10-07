@@ -78,8 +78,9 @@ export const getOne: RequestHandler[] = [
 export const create: RequestHandler[] = [
   blogValidations.title(),
   blogValidations.content(),
-  blogValidations.status(),
   blogValidations.coverImgUrl(),
+  blogValidations.tags(),
+  blogValidations.status(),
 
   // handle validation error
   (req, res, next) => {
@@ -108,7 +109,7 @@ export const create: RequestHandler[] = [
       content,
       status,
       coverImgUrl,
-      tags: [], // TODO
+      tags: [],
       authorId: userId,
     };
 

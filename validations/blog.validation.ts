@@ -77,3 +77,16 @@ export const coverImgUrl = (isOptional: boolean = false) => {
       }
     });
 };
+
+export const tags = (isOptional: boolean = false) => {
+  const MIN_LENGTH = 1;
+  const MAX_LENGTH = 10;
+  return body("tags")
+    .optional(isOptional)
+    .isArray({ min: MIN_LENGTH, max: MAX_LENGTH })
+    .withMessage(
+      `Tags must be of data type array with ${MIN_LENGTH} to ${MAX_LENGTH} string items.`,
+    )
+    .custom((tags: unknown[]) => tags.every((tag) => typeof tag === "string"))
+    .withMessage("Tags must be an array of strings.");
+};
