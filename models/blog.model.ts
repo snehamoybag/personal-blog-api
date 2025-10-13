@@ -71,8 +71,6 @@ export const create = async (
         connect: { id: authorId },
       },
 
-      // TODO: images
-
       tags: {
         connectOrCreate: tags.map((tagName) => ({
           where: { name: tagName },
@@ -88,21 +86,26 @@ export const create = async (
 };
 
 export const update = async (data: UpdateBlog): Promise<FormattedBlog> => {
-  const { id, title, content, status, coverImgUrl } = data;
+  const { id, selectedTags, removedTags, ...restData } = data;
 
   const rawBlog: RawBlog = await prisma.blog.update({
     where: { id },
 
     data: {
-      title,
-      content,
-      status,
-      coverImgUrl,
-    },
+      ...restData,
 
-    // TODO: tags
-    // disconnect from removed tags
-    // create or connect to new tags
+      tags: {
+        // TODO: remove unselected tag from blogs relation
+        // disconnect: removedTags?.map((tagName) => ({
+        //   where: { name: tagName },
+        // })),
+
+        connectOrCreate: selectedTags?.map((tagName) => ({
+          where: { name: tagName },
+          create: { name: tagName },
+        })),
+      },
+    },
 
     ...blogSelects,
   });

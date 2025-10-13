@@ -6,5 +6,6 @@ export type UpdateBlog = {
   content?: string;
   coverImgUrl?: string;
   status?: BlogStatus;
-  tags?: string[];
+  selectedTags?: string[];
+  removedTags?: string[];
 };

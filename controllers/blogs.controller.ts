@@ -103,13 +103,13 @@ export const create: RequestHandler[] = [
   async (req, res) => {
     const userId = assertUser(req).id;
 
-    const { title, content, status, coverImgUrl } = req.body;
+    const { title, content, status, coverImgUrl, tags } = req.body;
     const blogData: CreateBlog = {
       title,
       content,
       status,
       coverImgUrl,
-      tags: [],
+      tags,
       authorId: userId,
     };
 
@@ -125,6 +125,7 @@ export const update: RequestHandler[] = [
   blogValidations.content(true),
   blogValidations.status(true),
   blogValidations.coverImgUrl(true),
+  blogValidations.tags(true),
 
   // handle validation error
   (req, res, next) => {
@@ -153,8 +154,11 @@ export const update: RequestHandler[] = [
       throw new ErrorNotFound(`Blog with the id ${blogId} is not found.`);
     }
 
-    // TODO: handle images
     const { title, content, status, coverImgUrl } = req.body;
+    const selectedTags: string[] = req.body.tags;
+    const removedTags = selectedTags.filter(
+      (tagName: string) => !blog.tags.includes(tagName),
+    );
 
     const updateData: UpdateBlog = {
       id: blogId,
@@ -162,6 +166,8 @@ export const update: RequestHandler[] = [
       content,
       status,
       coverImgUrl,
+      selectedTags,
+      removedTags,
     };
 
     const updatedBlog = await blogModel.update(updateData);
