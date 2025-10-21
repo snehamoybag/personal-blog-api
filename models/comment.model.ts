@@ -16,6 +16,9 @@ export const findMany = (
     where: { blogId },
     take: limit || MIN_LIMIT,
     skip: offset || MIN_OFFSET,
+    orderBy: {
+      createdAt: "desc",
+    },
     include: {
       author: {
         ...safeUserSelects,
