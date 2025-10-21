@@ -109,6 +109,6 @@ enum Role {
 }
 
 enum BlogStatus {
-  DRAFT
+  ARCHIVED
   PUBLISHED
 }

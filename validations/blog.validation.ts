@@ -47,10 +47,10 @@ export const status = (isOptional: boolean = false) => {
     .notEmpty()
     .withMessage("Status is required.")
     .custom((status) => {
-      return status === "PUBLISHED" || "DRAFT";
+      return status === "PUBLISHED" || "ARCHIVED";
     })
     .withMessage(
-      "Status must be either 'PUBLISHED' or 'DRAFT' in uppercase letters.",
+      "Status must be either 'PUBLISHED' or 'ARCHIVED' in uppercase letters.",
     );
 };
 
@@ -83,6 +83,8 @@ export const tags = (isOptional: boolean = false) => {
   const MAX_LENGTH = 10;
   return body("tags")
     .optional(isOptional)
+    .notEmpty()
+    .withMessage("A tag is required.")
     .isArray({ min: MIN_LENGTH, max: MAX_LENGTH })
     .withMessage(
       `Tags must be of data type array with ${MIN_LENGTH} to ${MAX_LENGTH} string items.`,

@@ -24,12 +24,11 @@ export const id = () => {
 };
 
 // BODY FIELDS
-export const message = (isOptional: boolean = false) => {
+export const message = () => {
   const MIN_LENGTH = 3;
   const MAX_LENGTH = 255;
 
   return body("message")
-    .optional(isOptional)
     .isString()
     .withMessage("Message must be of data type string.")
     .trim()
