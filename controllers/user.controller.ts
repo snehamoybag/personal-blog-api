@@ -3,7 +3,7 @@ import * as userModel from "../models/user.model";
 import { ErrorNotFound } from "../libs/http-exceptions";
 import { SuccessResponse } from "../libs/http-response-shapes";
 import { findUserWrittenBlogs } from "../models/blog.model";
-import * as queryValidations from "../validations/limit-offset.validation";
+import * as queryValidations from "../validations/url-query.validation";
 import { validationResult } from "express-validator";
 import { FailureResponse } from "../libs/http-response-shapes";
 

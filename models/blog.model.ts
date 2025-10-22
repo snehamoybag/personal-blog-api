@@ -25,6 +25,7 @@ const formatRawBlog = (blog: RawBlog) => {
 export const findMany = async (
   limit?: number,
   offset?: number,
+  order?: "asc" | "desc",
 ): Promise<FormattedBlog[]> => {
   const defaultLimit = 10;
   const defaultOffset = 0;
@@ -32,6 +33,7 @@ export const findMany = async (
   const rawBlogs: RawBlog[] = await prisma.blog.findMany({
     take: limit || defaultLimit,
     skip: offset || defaultOffset,
+    orderBy: { updatedAt: order || "desc" },
 
     ...blogSelects,
   });
@@ -136,7 +138,7 @@ export const findUserWrittenBlogs = async (
     where: { authorId: userId },
     take: limit || defaultLimit,
     skip: offset || defaultOffset,
-    orderBy: { updatedAt: order ? order : "desc" },
+    orderBy: { updatedAt: order || "desc" },
 
     ...blogSelects,
   });

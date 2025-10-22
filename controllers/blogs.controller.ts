@@ -4,17 +4,15 @@ import * as blogModel from "../models/blog.model";
 import { FailureResponse, SuccessResponse } from "../libs/http-response-shapes";
 import { validationResult } from "express-validator";
 import { ErrorNotFound } from "../libs/http-exceptions";
-import {
-  limit as limitValidation,
-  offset as offsetValidation,
-} from "../validations/limit-offset.validation";
+import * as queryValidations from "../validations/url-query.validation";
 import assertUser from "../libs/asserts/user.assert";
 import { CreateBlog } from "../types/create-blog.type";
 import { UpdateBlog } from "../types/update-blog.type";
 
 export const getMany: RequestHandler[] = [
-  limitValidation(),
-  offsetValidation(),
+  queryValidations.limit(),
+  queryValidations.offset(),
+  queryValidations.order(),
 
   // handle url query validation errors
   (req, res, next) => {
@@ -36,7 +34,16 @@ export const getMany: RequestHandler[] = [
   // handle valid url query
   async (req, res) => {
     const { limit, offset } = req.query;
-    const blogs = await blogModel.findMany(Number(limit), Number(offset));
+    // descending by default
+    const order = req.query.order
+      ? (req.query.order as "asc" | "desc")
+      : "desc";
+
+    const blogs = await blogModel.findMany(
+      Number(limit),
+      Number(offset),
+      order,
+    );
 
     res.json(new SuccessResponse(`List of ${blogs.length} blogs.`, { blogs }));
   },

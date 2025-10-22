@@ -1,8 +1,5 @@
 import { RequestHandler } from "express";
-import {
-  limit as validateLimit,
-  offset as validateOffset,
-} from "../validations/limit-offset.validation";
+import * as queryValidations from "../validations/url-query.validation";
 import * as commentValidations from "../validations/comment.validation";
 import { validationResult } from "express-validator";
 import { FailureResponse, SuccessResponse } from "../libs/http-response-shapes";
@@ -12,8 +9,10 @@ import assertUser from "../libs/asserts/user.assert";
 
 export const getMany: RequestHandler[] = [
   // validations
-  validateLimit(),
-  validateOffset(),
+  queryValidations.limit(),
+  queryValidations.offset(),
+  queryValidations.order(),
+
   commentValidations.blog(),
 
   // handle validation errors
@@ -38,8 +37,12 @@ export const getMany: RequestHandler[] = [
     const blogId = Number(req.params.blogId);
     const limit = Number(req.query.limit);
     const offset = Number(req.query.offset);
+    // descending by default
+    const order = req.query.order
+      ? (req.query.order as "asc" | "desc")
+      : "desc";
 
-    const comments = await commentModel.findMany(blogId, limit, offset);
+    const comments = await commentModel.findMany(blogId, limit, offset, order);
 
     res.json(
       new SuccessResponse(`List of ${comments.length} comments.`, { comments }),

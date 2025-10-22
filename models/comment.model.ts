@@ -8,6 +8,7 @@ export const findMany = (
   blogId: number,
   limit?: number,
   offset?: number,
+  order?: "asc" | "desc",
 ): Promise<FormattedComment[]> => {
   const MIN_LIMIT = 0;
   const MIN_OFFSET = 0;
@@ -17,7 +18,7 @@ export const findMany = (
     take: limit || MIN_LIMIT,
     skip: offset || MIN_OFFSET,
     orderBy: {
-      createdAt: "desc",
+      updatedAt: order || "desc",
     },
     include: {
       author: {
