@@ -18,3 +18,14 @@ export const offset = () => {
     .isInt({ min: 0 })
     .withMessage("Offset must be a non-negative integer.");
 };
+
+export const order = () => {
+  return query("order")
+    .optional()
+    .isString()
+    .withMessage("Order must be a string.")
+    .custom((value: string) => {
+      return value === "asc" || "desc";
+    })
+    .withMessage("Order must be either 'asc' ord 'desc'.");
+};

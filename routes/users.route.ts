@@ -1,5 +1,6 @@
 import { Router } from "express";
 import verifyAuthToken from "../middlewares/auth/verify-auth-token.middleware";
+import * as usersController from "../controllers/user.controller";
 import * as imagesController from "../controllers/images.controller";
 import { imageUploader } from "../middlewares/uploader.middleware";
 
@@ -10,11 +11,11 @@ users.post("/{*splat}", verifyAuthToken);
 users.put("/{*splat}", verifyAuthToken);
 users.delete("/{*splat}", verifyAuthToken);
 
-// users/3/images
-users.get("/:id/images", () => {});
+users.get("/:id", usersController.getOne);
+
+// users/1/blogs/?limit=10&offset=0&order=desc
+users.get("/:id/blogs", usersController.getWrittenBlogs);
 
 users.post("/:id/images", imageUploader, imagesController.create);
-
-users.delete("/:id/images", () => {});
 
 export default users;

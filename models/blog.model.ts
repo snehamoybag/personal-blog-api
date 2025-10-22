@@ -21,6 +21,7 @@ const formatRawBlog = (blog: RawBlog) => {
     tags: blog.tags.map((tagObj) => tagObj.name),
   };
 };
+
 export const findMany = async (
   limit?: number,
   offset?: number,
@@ -120,4 +121,26 @@ export const deleteOne = async (id: number): Promise<FormattedBlog> => {
   });
 
   return formatRawBlog(deletedBlog);
+};
+
+export const findUserWrittenBlogs = async (
+  userId: number,
+  limit?: number,
+  offset?: number,
+  order?: "asc" | "desc",
+) => {
+  const defaultLimit = 10;
+  const defaultOffset = 0;
+
+  const rawBlogs: RawBlog[] = await prisma.blog.findMany({
+    where: { authorId: userId },
+    take: limit || defaultLimit,
+    skip: offset || defaultOffset,
+    orderBy: { updatedAt: order ? order : "desc" },
+
+    ...blogSelects,
+  });
+
+  const formattedBlogs = rawBlogs.map((blog) => formatRawBlog(blog));
+  return formattedBlogs;
 };
