@@ -98,10 +98,7 @@ export const update = async (data: UpdateBlog): Promise<FormattedBlog> => {
       ...restData,
 
       tags: {
-        // TODO: remove unselected tag from blogs relation
-        // disconnect: removedTags?.map((tagName) => ({
-        //   where: { name: tagName },
-        // })),
+        disconnect: removedTags?.map((tagName) => ({ name: tagName })),
 
         connectOrCreate: selectedTags?.map((tagName) => ({
           where: { name: tagName },
