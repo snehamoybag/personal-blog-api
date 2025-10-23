@@ -29,3 +29,10 @@ export const order = () => {
     })
     .withMessage("Order must be either 'asc' ord 'desc'.");
 };
+
+export const tagName = () => {
+  return query("name")
+    .optional()
+    .isString()
+    .withMessage("Tag name must be a string.");
+};
