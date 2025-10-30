@@ -124,7 +124,6 @@ export const create: RequestHandler[] = [
 ];
 
 export const update: RequestHandler[] = [
-  commentValidations.blog(),
   commentValidations.id(),
   commentValidations.message(),
 
