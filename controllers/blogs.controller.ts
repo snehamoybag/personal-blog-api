@@ -13,6 +13,7 @@ export const getMany: RequestHandler[] = [
   queryValidations.limit(),
   queryValidations.offset(),
   queryValidations.order(),
+  queryValidations.blogTitle(),
 
   // handle url query validation errors
   (req, res, next) => {
@@ -33,6 +34,8 @@ export const getMany: RequestHandler[] = [
 
   // handle valid url query
   async (req, res) => {
+    const title = req.query.title || undefined;
+
     const { limit, offset } = req.query;
     // descending by default
     const order = req.query.order
@@ -40,6 +43,7 @@ export const getMany: RequestHandler[] = [
       : "desc";
 
     const blogs = await blogModel.findMany(
+      title as string | undefined,
       Number(limit),
       Number(offset),
       order,

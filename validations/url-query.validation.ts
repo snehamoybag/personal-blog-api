@@ -36,3 +36,10 @@ export const tagName = () => {
     .isString()
     .withMessage("Tag name must be a string.");
 };
+
+export const blogTitle = () => {
+  return query("title")
+    .optional()
+    .isString()
+    .withMessage("Blog title must be a string.");
+};

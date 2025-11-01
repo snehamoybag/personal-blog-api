@@ -23,6 +23,7 @@ const formatRawBlog = (blog: RawBlog) => {
 };
 
 export const findMany = async (
+  title?: string,
   limit?: number,
   offset?: number,
   order?: "asc" | "desc",
@@ -31,6 +32,7 @@ export const findMany = async (
   const defaultOffset = 0;
 
   const rawBlogs: RawBlog[] = await prisma.blog.findMany({
+    where: title ? { title: { contains: title } } : undefined, // gets ignored if no title is provided
     take: limit || defaultLimit,
     skip: offset || defaultOffset,
     orderBy: { updatedAt: order || "desc" },
