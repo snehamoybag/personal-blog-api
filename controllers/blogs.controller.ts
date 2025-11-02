@@ -3,7 +3,7 @@ import * as blogValidations from "../validations/blog.validation";
 import * as blogModel from "../models/blog.model";
 import { FailureResponse, SuccessResponse } from "../libs/http-response-shapes";
 import { validationResult } from "express-validator";
-import { ErrorNotFound } from "../libs/http-exceptions";
+import { ErrorForbidden, ErrorNotFound } from "../libs/http-exceptions";
 import * as queryValidations from "../validations/url-query.validation";
 import assertUser from "../libs/asserts/user.assert";
 import { CreateBlog } from "../types/create-blog.type";
@@ -157,12 +157,19 @@ export const update: RequestHandler[] = [
 
   // no validation errors
   async (req, res) => {
+    const user = assertUser(req);
     const blogId = Number(req.params.id);
 
     const blog = await blogModel.findOne(blogId);
 
     if (!blog) {
       throw new ErrorNotFound(`Blog with the id ${blogId} is not found.`);
+    }
+
+    if (blog.authorId !== user.id) {
+      throw new ErrorForbidden(
+        `Only the author of the blog can update or delete it.`,
+      );
     }
 
     const { title, content, status, coverImgUrl } = req.body;
@@ -213,12 +220,19 @@ export const deleteOne: RequestHandler[] = [
 
   // handle no validation errors
   async (req, res) => {
+    const user = assertUser(req);
     const blogId = Number(req.params.id);
 
     const blog = await blogModel.findOne(blogId);
 
     if (!blog) {
       throw new ErrorNotFound(`Blog with the id ${blogId} is not found.`);
+    }
+
+    if (blog.authorId !== user.id) {
+      throw new ErrorForbidden(
+        `Only the author of the blog can update or delete it.`,
+      );
     }
 
     const deletedBlog = await blogModel.deleteOne(blogId);

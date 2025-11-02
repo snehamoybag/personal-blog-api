@@ -4,7 +4,7 @@ import * as commentValidations from "../validations/comment.validation";
 import { validationResult } from "express-validator";
 import { FailureResponse, SuccessResponse } from "../libs/http-response-shapes";
 import * as commentModel from "../models/comment.model";
-import { ErrorNotFound } from "../libs/http-exceptions";
+import { ErrorForbidden, ErrorNotFound } from "../libs/http-exceptions";
 import assertUser from "../libs/asserts/user.assert";
 
 export const getMany: RequestHandler[] = [
@@ -150,12 +150,17 @@ export const update: RequestHandler[] = [
 
   // handle no validation errors
   async (req, res) => {
+    const user = assertUser(req);
     const commentId = Number(req.params.id);
 
     const comment = await commentModel.findOne(commentId);
 
     if (!comment) {
       throw new ErrorNotFound(`Comment with the id ${commentId} is not found.`);
+    }
+
+    if (comment.authorId !== user.id) {
+      throw new ErrorForbidden("Only the author can update a comment.");
     }
 
     const { message } = req.body;
@@ -195,12 +200,23 @@ export const deleteOne: RequestHandler[] = [
 
   // handle no validation error
   async (req, res) => {
+    const user = assertUser(req);
     const commentId = Number(req.params.id);
 
     const comment = await commentModel.findOne(commentId);
 
     if (!comment) {
       throw new ErrorNotFound(`Comment with the id ${commentId} is not found.`);
+    }
+
+    if (
+      comment.authorId !== user.id &&
+      user.role !== "ADMIN" &&
+      user.role === "MODERATOR"
+    ) {
+      throw new ErrorForbidden(
+        "Only the author or an admin/moderator can delete a comment.",
+      );
     }
 
     const deletedComment = await commentModel.deleteOne(commentId);

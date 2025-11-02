@@ -5,6 +5,7 @@ import {
   create as createComment,
 } from "../controllers/comments.controller";
 import verifyAuthToken from "../middlewares/auth/verify-auth-token.middleware";
+import adminOnly from "../middlewares/auth/admin-only.middleware";
 
 const blogs = Router();
 
@@ -15,12 +16,12 @@ blogs.delete("/{*splat}", verifyAuthToken);
 
 // blogs/?limit=10&offset=0
 blogs.get("/", blogsController.getMany);
-blogs.post("/", blogsController.create);
+blogs.post("/", adminOnly, blogsController.create);
 
 // blogs/3
 blogs.get("/:id", blogsController.getOne);
-blogs.put("/:id", blogsController.update);
-blogs.delete("/:id", blogsController.deleteOne);
+blogs.put("/:id", adminOnly, blogsController.update);
+blogs.delete("/:id", adminOnly, blogsController.deleteOne);
 
 // blogs/2/commets/?limit=10&offset=10
 blogs.get("/:blogId/comments", getManyComments);
