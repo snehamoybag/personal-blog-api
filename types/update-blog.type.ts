@@ -1,4 +1,4 @@
-import { BlogStatus } from "../generated/prisma";
+import { BlogStatus } from "@prisma/client";
 
 export type UpdateBlog = {
   id: number;

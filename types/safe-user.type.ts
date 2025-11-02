@@ -1,4 +1,4 @@
-import { Profile, User } from "../generated/prisma";
+import { Profile, User } from "@prisma/client";
 
 export type SafeUser = Omit<User, "passwordHash" | "email"> & {
   // WARNNING!: profile can never be null

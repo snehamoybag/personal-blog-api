@@ -7,7 +7,7 @@ const assertUser = (req: Request): SafeUser => {
     throw new ErrorUnauthorized("Failed to authenticate user.");
   }
 
-  const user = req.user;
+  const user = req.user as SafeUser;
 
   if (!user.id || !user.role) {
     throw new Error("User data mismatch.");

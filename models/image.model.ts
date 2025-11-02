@@ -1,5 +1,5 @@
 import prisma from "../configs/prisma.config";
-import { Image } from "../generated/prisma";
+import { Image } from "@prisma/client";
 import { CreateImage } from "../types/create-image.type";
 
 export const findOneByUrl = (url: string) => {

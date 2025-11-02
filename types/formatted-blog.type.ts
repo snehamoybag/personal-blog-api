@@ -1,4 +1,4 @@
-import { Blog } from "../generated/prisma";
+import { Blog } from "@prisma/client";
 import { SafeUser } from "./safe-user.type";
 
 export type FormattedBlog = Blog & {

@@ -1,2 +1,2 @@
-import { Image } from "../generated/prisma";
+import { Image } from "@prisma/client";
 export type CreateImage = Omit<Image, "id" | "createdAt">;
