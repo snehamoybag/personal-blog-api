@@ -116,10 +116,15 @@ export const update = async (data: UpdateBlog): Promise<FormattedBlog> => {
 };
 
 export const deleteOne = async (id: number): Promise<FormattedBlog> => {
-  const deletedBlog: RawBlog = await prisma.blog.delete({
-    where: { id },
-    ...blogSelects,
+  const deleteBlogQuery = prisma.blog.delete({ where: { id }, ...blogSelects });
+  const deleteCommentsQuery = prisma.comment.deleteMany({
+    where: { blogId: id },
   });
+
+  const [, deletedBlog] = await prisma.$transaction([
+    deleteCommentsQuery,
+    deleteBlogQuery,
+  ]);
 
   return formatRawBlog(deletedBlog);
 };
