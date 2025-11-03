@@ -1,5 +1,15 @@
 import prisma from "../configs/prisma.config";
 
+export const findOne = async (name: string): Promise<string | null> => {
+  const tag = await prisma.tag.findUnique({ where: { name } });
+
+  if (!tag) {
+    return null;
+  }
+
+  return tag.name;
+};
+
 export const findMany = async (
   limit?: number,
   offset?: number,

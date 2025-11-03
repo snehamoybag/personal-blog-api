@@ -150,3 +150,25 @@ export const findUserWrittenBlogs = async (
   const formattedBlogs = rawBlogs.map((blog) => formatRawBlog(blog));
   return formattedBlogs;
 };
+
+export const findBlogsInTag = async (
+  tag: string,
+  limit?: number,
+  offset?: number,
+  order?: "asc" | "desc",
+): Promise<FormattedBlog[]> => {
+  const defaultLimit = 10;
+  const defaultOffset = 0;
+
+  const rawBlogs: RawBlog[] = await prisma.blog.findMany({
+    where: { tags: { some: { name: tag } } },
+    ...blogSelects,
+
+    take: limit || defaultLimit,
+    skip: offset || defaultOffset,
+    orderBy: { updatedAt: order || "desc" },
+  });
+
+  const formattedBlogs = rawBlogs.map((blog) => formatRawBlog(blog));
+  return formattedBlogs;
+};
